@@ -1,87 +1,44 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 
-const SOSSlider = ({ onSlideComplete, isEmergency }) => {
+const SOSSlider = () => {
   const [sliderPosition, setSliderPosition] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const sliderRef = useRef(null);
 
-  const handleStart = (clientX) => {
-    setIsDragging(true);
-    updateSliderPosition(clientX);
-  };
-
-  const handleMove = (clientX) => {
-    if (isDragging) {
-      updateSliderPosition(clientX);
-    }
-  };
-
-  const handleEnd = () => {
-    setIsDragging(false);
-    if (sliderPosition >= 90) {
-      onSlideComplete();
-    } else {
-      resetSlider();
-    }
-  };
-
-  const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
-  const handleTouchMove = (e) => handleMove(e.touches[0].clientX);
-  const handleMouseDown = (e) => handleStart(e.clientX);
-  const handleMouseMove = (e) => handleMove(e.clientX);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleEnd);
-      document.addEventListener('touchmove', handleTouchMove);
-      document.addEventListener('touchend', handleEnd);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleEnd);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleEnd);
-    };
-  }, [isDragging]);
-
-  useEffect(() => {
-    if (!isEmergency) {
-      resetSlider();
-    }
-  }, [isEmergency]);
-
-  const updateSliderPosition = (clientX) => {
-    const slider = sliderRef.current;
-    const rect = slider.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    const newPosition = (x / rect.width) * 100;
+  const handleSliderChange = (e) => {
+    const newPosition = (e.target.value / 100) * (e.target.offsetWidth - 40);
     setSliderPosition(newPosition);
   };
 
-  const resetSlider = () => {
-    setSliderPosition(0);
+  const handleSliderComplete = () => {
+    if (sliderPosition >= e.target.offsetWidth - 50) {
+      // Trigger emergency call
+      console.log("Emergency call triggered");
+    } else {
+      setSliderPosition(0);
+    }
   };
 
   return (
-    <div
-      ref={sliderRef}
-      className="relative h-14 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
-      onMouseDown={handleMouseDown}
-      onTouchStart={handleTouchStart}
-    >
+    <div className="relative w-full h-12 bg-gray-200 rounded-full overflow-hidden">
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={sliderPosition}
+        onChange={handleSliderChange}
+        onMouseUp={handleSliderComplete}
+        onTouchEnd={handleSliderComplete}
+        className="absolute w-full h-full opacity-0 cursor-pointer"
+      />
       <div
-        className="absolute top-0 left-0 h-full bg-red-500 transition-all duration-100 ease-out flex items-center justify-center text-white font-bold"
-        style={{ width: `${sliderPosition}%` }}
+        className="absolute left-0 top-0 h-full bg-gray-300 transition-all duration-300 ease-out flex items-center justify-start pl-2"
+        style={{ width: `${sliderPosition + 40}px` }}
       >
-        {sliderPosition > 10 && 'โทรฉุกเฉิน'}
+        <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-bold">
+          SOS
+        </div>
       </div>
-      <div
-        className="absolute top-0 left-0 h-full w-14 bg-red-600 rounded-full flex items-center justify-center text-white"
-        style={{ transform: `translateX(${sliderPosition}%)` }}
-      >
-        SOS
+      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600">
+        โทรฉุกเฉิน
       </div>
     </div>
   );
