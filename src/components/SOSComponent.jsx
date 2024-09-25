@@ -13,7 +13,7 @@ const SOSComponent = () => {
     setTimeout(() => {
       setIsEmergency(false);
       setShowPopup(false);
-    }, 5000); // ปิด Pop-up หลังจาก 5 วินาที
+    }, 3000); // ปิด Pop-up หลังจาก 3 วินาที
   };
 
   return (

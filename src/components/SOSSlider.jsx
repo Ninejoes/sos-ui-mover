@@ -2,21 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const SOSSlider = ({ onSlideComplete }) => {
   const [sliderPosition, setSliderPosition] = useState(0);
-  const [isEmergency, setIsEmergency] = useState(false);
-  const [countdown, setCountdown] = useState(5);
   const sliderRef = useRef(null);
 
   useEffect(() => {
     const handleMouseUp = () => {
       if (sliderPosition >= 90) {
-        setIsEmergency(true);
         if (typeof onSlideComplete === 'function') {
           onSlideComplete();
         }
-        alert('กำลังโทรหาบริการฉุกเฉิน');
-      } else {
-        setSliderPosition(0);
       }
+      setSliderPosition(0);
     };
 
     document.addEventListener('mouseup', handleMouseUp);
@@ -24,16 +19,6 @@ const SOSSlider = ({ onSlideComplete }) => {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [sliderPosition, onSlideComplete]);
-
-  useEffect(() => {
-    let timer;
-    if (isEmergency && countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [isEmergency, countdown]);
 
   const handleSliderChange = (e) => {
     const newPosition = Math.min(parseInt(e.target.value), 100);
@@ -62,7 +47,7 @@ const SOSSlider = ({ onSlideComplete }) => {
         </div>
       </div>
       <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white">
-        {isEmergency ? `เริ่มโทรใน ${countdown} วินาที` : 'เลื่อนเพื่อโทรฉุกเฉิน'}
+        เลื่อนเพื่อโทรฉุกเฉิน
       </div>
     </div>
   );
