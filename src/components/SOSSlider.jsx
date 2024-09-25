@@ -6,7 +6,7 @@ const SOSSlider = ({ onSlideComplete }) => {
 
   useEffect(() => {
     const handleMouseUp = () => {
-      if (sliderPosition >= sliderRef.current.offsetWidth - 50) {
+      if (sliderPosition >= 90) {
         onSlideComplete();
       }
       setSliderPosition(0);
@@ -19,10 +19,7 @@ const SOSSlider = ({ onSlideComplete }) => {
   }, [sliderPosition, onSlideComplete]);
 
   const handleSliderChange = (e) => {
-    const newPosition = Math.min(
-      e.target.value,
-      sliderRef.current.offsetWidth - 40
-    );
+    const newPosition = Math.min(parseInt(e.target.value), 100);
     setSliderPosition(newPosition);
   };
 
@@ -37,18 +34,18 @@ const SOSSlider = ({ onSlideComplete }) => {
         max="100"
         value={sliderPosition}
         onChange={handleSliderChange}
-        className="absolute w-full h-full opacity-0 cursor-pointer"
+        className="absolute w-full h-full opacity-0 cursor-pointer z-10"
       />
       <div
-        className="absolute left-0 top-0 h-full bg-gray-300 transition-all duration-300 ease-out flex items-center justify-start pl-2"
-        style={{ width: `${sliderPosition + 40}px` }}
+        className="absolute left-0 top-0 h-full bg-red-500 transition-all duration-300 ease-out flex items-center justify-end pr-2"
+        style={{ width: `${sliderPosition}%` }}
       >
-        <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center text-white font-bold">
+        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-red-500 font-bold">
           SOS
         </div>
       </div>
-      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600">
-        โทรฉุกเฉิน
+      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white">
+        เลื่อนเพื่อโทรฉุกเฉิน
       </div>
     </div>
   );
