@@ -21,7 +21,7 @@ const SOSComponent = () => {
         <PhoneCall className="inline-block w-12 h-12 text-red-500" />
       </div>
       <p className="text-gray-600 mb-4 text-center">
-        เลื่อนเพื่อโทรหาบริการฉุกเฉิน
+        เลื่อนไปทางขวาเพื่อโทรหาบริการฉุกเฉิน
       </p>
       <SOSSlider onSlideComplete={handleEmergencyCall} isEmergency={isEmergency} />
       {isEmergency && (
