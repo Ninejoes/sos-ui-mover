@@ -7,7 +7,9 @@ const SOSSlider = ({ onSlideComplete }) => {
   useEffect(() => {
     const handleMouseUp = () => {
       if (sliderPosition >= 90) {
-        onSlideComplete();
+        if (typeof onSlideComplete === 'function') {
+          onSlideComplete();
+        }
       }
       setSliderPosition(0);
     };
