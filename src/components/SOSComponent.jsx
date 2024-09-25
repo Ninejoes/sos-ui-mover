@@ -25,7 +25,7 @@ const SOSComponent = () => {
       <p className="text-gray-600 mb-4 text-center">
         เลื่อนไปทางขวาเพื่อโทรหาบริการฉุกเฉิน
       </p>
-      <SOSSlider onSlideComplete={handleEmergencyCall} isEmergency={isEmergency} />
+      <SOSSlider onSlideComplete={handleEmergencyCall} />
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg">
