@@ -1,32 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const SOSSlider = () => {
+const SOSSlider = ({ onSlideComplete }) => {
   const [sliderPosition, setSliderPosition] = useState(0);
+  const sliderRef = useRef(null);
+
+  useEffect(() => {
+    const handleMouseUp = () => {
+      if (sliderPosition >= sliderRef.current.offsetWidth - 50) {
+        onSlideComplete();
+      }
+      setSliderPosition(0);
+    };
+
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [sliderPosition, onSlideComplete]);
 
   const handleSliderChange = (e) => {
-    const newPosition = (e.target.value / 100) * (e.target.offsetWidth - 40);
+    const newPosition = Math.min(
+      e.target.value,
+      sliderRef.current.offsetWidth - 40
+    );
     setSliderPosition(newPosition);
   };
 
-  const handleSliderComplete = () => {
-    if (sliderPosition >= e.target.offsetWidth - 50) {
-      // Trigger emergency call
-      console.log("Emergency call triggered");
-    } else {
-      setSliderPosition(0);
-    }
-  };
-
   return (
-    <div className="relative w-full h-12 bg-gray-200 rounded-full overflow-hidden">
+    <div
+      ref={sliderRef}
+      className="relative w-full h-12 bg-gray-200 rounded-full overflow-hidden"
+    >
       <input
         type="range"
         min="0"
         max="100"
         value={sliderPosition}
         onChange={handleSliderChange}
-        onMouseUp={handleSliderComplete}
-        onTouchEnd={handleSliderComplete}
         className="absolute w-full h-full opacity-0 cursor-pointer"
       />
       <div
