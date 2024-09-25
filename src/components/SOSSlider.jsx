@@ -2,38 +2,55 @@ import React, { useState, useRef, useEffect } from 'react';
 
 const SOSSlider = ({ onSlideComplete, isEmergency }) => {
   const [sliderPosition, setSliderPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef(null);
 
-  const handleTouchStart = (e) => {
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
+  const handleStart = (clientX) => {
+    setIsDragging(true);
+    updateSliderPosition(clientX);
   };
 
-  const handleTouchMove = (e) => {
-    const touch = e.touches[0];
-    updateSliderPosition(touch.clientX);
+  const handleMove = (clientX) => {
+    if (isDragging) {
+      updateSliderPosition(clientX);
+    }
   };
 
-  const handleTouchEnd = () => {
-    document.removeEventListener('touchmove', handleTouchMove);
-    document.removeEventListener('touchend', handleTouchEnd);
-    resetSlider();
+  const handleEnd = () => {
+    setIsDragging(false);
+    if (sliderPosition >= 90) {
+      onSlideComplete();
+    } else {
+      resetSlider();
+    }
   };
 
-  const handleMouseDown = (e) => {
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
+  const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
+  const handleTouchMove = (e) => handleMove(e.touches[0].clientX);
+  const handleMouseDown = (e) => handleStart(e.clientX);
+  const handleMouseMove = (e) => handleMove(e.clientX);
 
-  const handleMouseMove = (e) => {
-    updateSliderPosition(e.clientX);
-  };
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleEnd);
+    }
 
-  const handleMouseUp = () => {
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-    resetSlider();
-  };
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleEnd);
+    };
+  }, [isDragging]);
+
+  useEffect(() => {
+    if (!isEmergency) {
+      resetSlider();
+    }
+  }, [isEmergency]);
 
   const updateSliderPosition = (clientX) => {
     const slider = sliderRef.current;
@@ -41,21 +58,11 @@ const SOSSlider = ({ onSlideComplete, isEmergency }) => {
     const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
     const newPosition = (x / rect.width) * 100;
     setSliderPosition(newPosition);
-
-    if (newPosition >= 90) {
-      onSlideComplete();
-    }
   };
 
   const resetSlider = () => {
     setSliderPosition(0);
   };
-
-  useEffect(() => {
-    if (!isEmergency) {
-      setSliderPosition(0);
-    }
-  }, [isEmergency]);
 
   return (
     <div

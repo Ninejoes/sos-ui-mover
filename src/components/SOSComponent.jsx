@@ -4,14 +4,16 @@ import { PhoneCall } from 'lucide-react';
 
 const SOSComponent = () => {
   const [isEmergency, setIsEmergency] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleEmergencyCall = () => {
     setIsEmergency(true);
-    // ในที่นี้เราจะจำลองการโทรฉุกเฉิน
+    setShowPopup(true);
+    // จำลองการโทรฉุกเฉิน
     setTimeout(() => {
-      alert('กำลังโทรหาบริการฉุกเฉิน');
       setIsEmergency(false);
-    }, 1000);
+      setShowPopup(false);
+    }, 3000); // ปิด Pop-up หลังจาก 3 วินาที
   };
 
   return (
@@ -24,10 +26,13 @@ const SOSComponent = () => {
         เลื่อนไปทางขวาเพื่อโทรหาบริการฉุกเฉิน
       </p>
       <SOSSlider onSlideComplete={handleEmergencyCall} isEmergency={isEmergency} />
-      {isEmergency && (
-        <p className="mt-4 text-green-600 text-center font-semibold">
-          กำลังโทร... โปรดรอสักครู่
-        </p>
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg">
+            <p className="text-xl font-bold mb-2">กำลังโทร...</p>
+            <p>โปรดรอสักครู่</p>
+          </div>
+        </div>
       )}
     </div>
   );
